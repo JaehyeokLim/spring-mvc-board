@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}">My Board</a>
+            <ul class="navbar-nav ms-auto flex-row flex-nowrap">
+
+                <!-- 로그인 안 한 경우 -->
+                <li class="nav-item" th:if="${loginUser == null}">
+                    <a class="nav-link px-2"
+                       th:href="@{/login}"
+                       th:text="#{button.login}">로그인</a>
+                </li>
+
+                <li class="nav-item" th:if="${loginUser == null}">
+                    <a class="nav-link px-2"
+                       th:href="@{/signup}"
+                       th:text="#{button.signup}">회원가입</a>
+                </li>
+
+                <!-- 로그인 한 경우 -->
+                <li class="nav-item" th:if="${loginUser != null}">
+                    <a class="nav-link px-2"
+                       th:href="@{/users/{id}(id=${loginUser.id})}"
+                       th:text="${loginUser.name}">사용자</a>
+                </li>
+
+                <li class="nav-item" th:if="${loginUser != null}">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit"
+                                class="btn btn-link nav-link px-2"
+                                th:text="#{button.logout}">로그아웃</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+</body>
+</html>
