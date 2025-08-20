@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <title th:text="#{error.404.title}">404 Not Found</title>
+</head>
+<body>
+
+<!-- 공통 헤더 -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-5 text-center">
+    <h1 class="display-4" th:text="#{error.404.title}">404</h1>
+    <p class="lead" th:text="#{error.404.message}">요청하신 페이지를 찾을 수 없습니다.</p>
+</div>
+
+<!-- 공통 푸터 -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
