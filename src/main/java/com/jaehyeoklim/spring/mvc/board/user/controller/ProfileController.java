@@ -1,6 +1,6 @@
 package com.jaehyeoklim.spring.mvc.board.user.controller;
 
-import com.jaehyeoklim.spring.mvc.board.auth.resolver.Login;
+import com.jaehyeoklim.spring.mvc.board.common.advice.UseLoginUser;
 import com.jaehyeoklim.spring.mvc.board.user.dto.*;
 import com.jaehyeoklim.spring.mvc.board.user.service.UserService;
 import com.jaehyeoklim.spring.mvc.board.user.validator.EmailUpdateRequestValidator;
@@ -13,8 +13,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @Slf4j
 @Controller
+@UseLoginUser
 @RequiredArgsConstructor
 @RequestMapping("/settings")
 public class ProfileController {
@@ -28,17 +31,10 @@ public class ProfileController {
     }
 
     @GetMapping("/profile")
-    public String profileForm(@Login UserDto loginUser, Model model) {
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
-
-        NameUpdateRequest nameUpdateRequest = new NameUpdateRequest(loginUser.name());
-        EmailUpdateRequest emailUpdateRequest = new EmailUpdateRequest(loginUser.email());
-
-        model.addAttribute("loginUser", loginUser);
-        model.addAttribute("name", nameUpdateRequest);
-        model.addAttribute("email", emailUpdateRequest);
+    public String profileForm(Model model) {
+        UserDto user = (UserDto) model.getAttribute("loginUser");
+        model.addAttribute("name", new NameUpdateRequest(user.name()));
+        model.addAttribute("email", new EmailUpdateRequest(user.email()));
 
         return "settings/profile-edit";
     }
@@ -47,20 +43,15 @@ public class ProfileController {
     public String updateName(
             @Validated @ModelAttribute("name") NameUpdateRequest nameUpdateRequest,
             BindingResult bindingResult,
-            @Login UserDto loginUser,
+            @RequestParam UUID userId,
             Model model
     ) {
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
-
         if (bindingResult.hasErrors()) {
-            model.addAttribute("loginUser", loginUser);
-            model.addAttribute("email", new EmailUpdateRequest(loginUser.email()));
+            model.addAttribute("email", new EmailUpdateRequest(userService.findUser(userId).email()));
             return "settings/profile-edit";
         }
 
-        UserDto userDto = userService.updateName(loginUser.id(), nameUpdateRequest);
+        UserDto userDto = userService.updateName(userId, nameUpdateRequest);
         model.addAttribute("loginUser", userDto);
         model.addAttribute("email", new EmailUpdateRequest(userDto.email()));
 
@@ -71,21 +62,15 @@ public class ProfileController {
     public String updateEmail(
             @Validated @ModelAttribute("email") EmailUpdateRequest emailUpdateRequest,
             BindingResult bindingResult,
-            @Login UserDto loginUser,
+            @RequestParam UUID userId,
             Model model
     ) {
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
-
         if (bindingResult.hasErrors()) {
-            model.addAttribute("loginUser", loginUser);
-            model.addAttribute("name", new NameUpdateRequest(loginUser.name()));
+            model.addAttribute("name", new NameUpdateRequest(userService.findUser(userId).name()));
             return "settings/profile-edit";
         }
 
-        UserDto userDto = userService.updateEmail(loginUser.id(), emailUpdateRequest);
-        model.addAttribute("loginUser", userDto);
+        UserDto userDto = userService.updateEmail(userId, emailUpdateRequest);
         model.addAttribute("name", new NameUpdateRequest(userDto.name()));
 
         return "settings/profile-edit";
