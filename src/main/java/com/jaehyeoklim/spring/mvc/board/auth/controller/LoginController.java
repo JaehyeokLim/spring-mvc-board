@@ -2,9 +2,8 @@ package com.jaehyeoklim.spring.mvc.board.auth.controller;
 
 import com.jaehyeoklim.spring.mvc.board.auth.dto.LoginRequest;
 import com.jaehyeoklim.spring.mvc.board.auth.dto.SessionDto;
-import com.jaehyeoklim.spring.mvc.board.auth.resolver.Login;
 import com.jaehyeoklim.spring.mvc.board.auth.service.LoginService;
-import com.jaehyeoklim.spring.mvc.board.user.dto.UserDto;
+import com.jaehyeoklim.spring.mvc.board.common.advice.UseLoginUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +17,14 @@ import java.util.UUID;
 
 @Slf4j
 @Controller
+@UseLoginUser
 @RequiredArgsConstructor
 public class LoginController {
 
     private final LoginService loginService;
 
     @GetMapping("/login")
-    public String loginForm(
-            @ModelAttribute("user") LoginRequest loginRequest,
-            @Login UserDto loginUser
-    ) {
-        if (loginUser != null) {
-            return "redirect:/";
-        }
-
+    public String loginForm(@ModelAttribute("user") LoginRequest loginRequest) {
         return "login/login";
     }
 
@@ -58,7 +51,6 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute("loginUser", sessionDto);
 
-        log.info("Redirect to " + redirectURL);
         return "redirect:" +  redirectURL;
     }
 }

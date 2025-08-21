@@ -1,6 +1,6 @@
 package com.jaehyeoklim.spring.mvc.board.user.controller;
 
-import com.jaehyeoklim.spring.mvc.board.auth.resolver.Login;
+import com.jaehyeoklim.spring.mvc.board.common.advice.UseLoginUser;
 import com.jaehyeoklim.spring.mvc.board.user.dto.UserDto;
 import com.jaehyeoklim.spring.mvc.board.user.dto.UserSignupRequest;
 import com.jaehyeoklim.spring.mvc.board.user.service.UserService;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
+@UseLoginUser
 @RequiredArgsConstructor
 @RequestMapping("/signup")
 public class SignupController {
@@ -22,20 +23,15 @@ public class SignupController {
     private final UserService userService;
     private final UserSignupRequestValidator userSignupRequestValidator;
 
-    @InitBinder
+    @InitBinder("user")
     public void initBinder(WebDataBinder binder) {
         binder.addValidators(userSignupRequestValidator);
     }
 
     @GetMapping()
     public String signupForm(
-            @ModelAttribute("user") UserSignupRequest userSignupRequest,
-            @Login UserDto loginUser
+            @ModelAttribute("user") UserSignupRequest userSignupRequest
     ) {
-        if (loginUser != null) {
-            return "redirect:/";
-        }
-
         return "signup/signup";
     }
 
