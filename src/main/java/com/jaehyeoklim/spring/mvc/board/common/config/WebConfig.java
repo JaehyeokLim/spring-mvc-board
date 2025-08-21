@@ -1,5 +1,6 @@
 package com.jaehyeoklim.spring.mvc.board.common.config;
 
+import com.jaehyeoklim.spring.mvc.board.auth.interceptor.AlreadyLoginInterceptor;
 import com.jaehyeoklim.spring.mvc.board.auth.interceptor.LoginCheckInterceptor;
 import com.jaehyeoklim.spring.mvc.board.auth.resolver.LoginUserArgumentResolver;
 import com.jaehyeoklim.spring.mvc.board.common.interceptor.LogInterceptor;
@@ -33,7 +34,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/login", "/signup", "/logout",
+                .excludePathPatterns("/", "/login", "/signup",
                         "/css/**", "/*.ico", "/error");
+
+        registry.addInterceptor(new AlreadyLoginInterceptor())
+                .order(3)
+                .addPathPatterns("/login", "/signup");
     }
 }
