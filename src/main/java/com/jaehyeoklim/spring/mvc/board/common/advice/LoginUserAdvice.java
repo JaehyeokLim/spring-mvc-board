@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Slf4j
-@ControllerAdvice(assignableTypes = BasicErrorController.class)
+@ControllerAdvice(annotations = UseLoginUser.class)
 @RequiredArgsConstructor
 public class LoginUserAdvice {
 
