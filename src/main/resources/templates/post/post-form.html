@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <title th:text="#{title.postWrite}">글쓰기</title>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin-top: 80px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        textarea {
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 공통 네비게이션 -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container">
+    <div class="card shadow">
+        <div class="card-body p-4">
+
+            <h3 class="text-center mb-4"
+                th:text="${mode == 'edit'} ? #{title.postEdit} : #{title.postWrite}">
+                글쓰기
+            </h3>
+
+            <form th:action="@{/posts/write}" th:object="${post}" method="post">
+
+                <!-- 제목 -->
+                <div class="mb-3">
+                    <label for="title" class="form-label" th:text="#{label.postTitle}">제목</label>
+                    <input type="text" id="title"
+                           th:field="*{title}"
+                           class="form-control"
+                           th:errorclass="field-error"
+                           th:placeholder="#{placeholder.postTitle}"
+                           required>
+                    <div class="field-error" th:errors="*{title}"></div>
+                </div>
+
+                <!-- 내용 -->
+                <div class="mb-3">
+                    <label for="content" class="form-label" th:text="#{label.postContent}">내용</label>
+                    <textarea id="content"
+                              th:field="*{content}"
+                              class="form-control"
+                              th:errorclass="field-error"
+                              rows="15"
+                              th:placeholder="#{placeholder.postContent}"
+                              required></textarea>
+                    <div class="field-error" th:errors="*{content}"></div>
+                </div>
+
+                <!-- 등록/수정 버튼 -->
+                <button type="submit" class="btn btn-dark w-100"
+                        th:text="${mode == 'edit'} ? #{button.update} : #{button.write}">
+                    등록하기
+                </button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 공통 푸터 -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
