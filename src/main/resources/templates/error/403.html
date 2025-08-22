@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <title th:text="#{error.403.title}">403 Forbidden</title>
+</head>
+<body>
+
+<!-- 공통 헤더 -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-5 text-center">
+    <h1 class="display-4" th:text="#{error.403.title}">403</h1>
+    <p class="lead" th:text="#{error.403.message}">접근 권한이 없습니다.</p>
+</div>
+
+<!-- 공통 푸터 -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
