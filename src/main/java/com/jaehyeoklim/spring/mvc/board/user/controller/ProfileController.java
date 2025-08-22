@@ -57,7 +57,7 @@ public class ProfileController {
         model.addAttribute("loginUser", userDto);
         model.addAttribute("email", new EmailUpdateRequest(userDto.email()));
 
-        return "settings/profile-edit";
+        return "redirect:/settings/profile";
     }
 
     @PostMapping("/profile/email")
@@ -76,6 +76,6 @@ public class ProfileController {
         UserDto userDto = userService.updateEmail(Objects.requireNonNull(loginUser).id(), emailUpdateRequest);
         model.addAttribute("name", new NameUpdateRequest(userDto.name()));
 
-        return "settings/profile-edit";
+        return "redirect:/settings/profile";
     }
 }

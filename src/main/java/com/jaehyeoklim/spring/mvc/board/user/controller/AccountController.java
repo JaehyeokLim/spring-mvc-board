@@ -58,7 +58,7 @@ public class AccountController {
 
         model.addAttribute("password", passwordUpdateRequest);
 
-        return "index";
+        return "redirect:/";
     }
 
     @GetMapping("/account/delete")
@@ -92,6 +92,6 @@ public class AccountController {
         session.invalidate();
         model.addAttribute("loginUser", null);
 
-        return "index";
+        return "redirect:/";
     }
 }
