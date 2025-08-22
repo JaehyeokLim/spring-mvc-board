@@ -32,8 +32,6 @@
             <!-- 이름 수정 폼 -->
             <form th:action="@{/settings/profile/name}" th:object="${name}" method="post">
 
-                <input type="hidden" name="userId" th:value="${loginUser.id}"/>
-
                 <div class="mb-3">
                     <label for="name" class="form-label" th:text="#{label.name}">이름</label>
                     <div class="d-flex gap-2">
@@ -52,8 +50,6 @@
 
             <!-- 이메일 수정 폼 -->
             <form th:action="@{/settings/profile/email}" th:object="${email}" method="post">
-
-                <input type="hidden" name="userId" th:value="${loginUser.id}"/>
 
                 <div class="mb-3">
                     <label for="email" class="form-label" th:text="#{label.email}">이메일</label>

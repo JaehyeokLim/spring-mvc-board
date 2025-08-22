@@ -29,8 +29,6 @@
             <!-- 폼: password 바인딩 -->
             <form th:action th:object="${password}" method="post" novalidate>
 
-                <input type="hidden" name="userId" th:value="${loginUser.id}"/>
-
                 <!-- 글로벌 에러 (예: 현재 비번 불일치) -->
                 <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger mb-3"
                      th:each="e : ${#fields.globalErrors()}" th:text="${e}">오류</div>

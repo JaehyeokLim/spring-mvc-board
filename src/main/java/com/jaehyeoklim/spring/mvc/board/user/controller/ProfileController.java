@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -32,9 +33,9 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String profileForm(Model model) {
-        UserDto user = (UserDto) model.getAttribute("loginUser");
-        model.addAttribute("name", new NameUpdateRequest(user.name()));
-        model.addAttribute("email", new EmailUpdateRequest(user.email()));
+        UserDto loginUser = (UserDto) model.getAttribute("loginUser");
+        model.addAttribute("name", new NameUpdateRequest(Objects.requireNonNull(loginUser).name()));
+        model.addAttribute("email", new EmailUpdateRequest(Objects.requireNonNull(loginUser).email()));
 
         return "settings/profile-edit";
     }
@@ -43,15 +44,16 @@ public class ProfileController {
     public String updateName(
             @Validated @ModelAttribute("name") NameUpdateRequest nameUpdateRequest,
             BindingResult bindingResult,
-            @RequestParam UUID userId,
             Model model
     ) {
+        UserDto loginUser = (UserDto) model.getAttribute("loginUser");
+
         if (bindingResult.hasErrors()) {
-            model.addAttribute("email", new EmailUpdateRequest(userService.findUser(userId).email()));
+            model.addAttribute("email", new EmailUpdateRequest(userService.findUser(Objects.requireNonNull(loginUser).id()).email()));
             return "settings/profile-edit";
         }
 
-        UserDto userDto = userService.updateName(userId, nameUpdateRequest);
+        UserDto userDto = userService.updateName(Objects.requireNonNull(loginUser).id(), nameUpdateRequest);
         model.addAttribute("loginUser", userDto);
         model.addAttribute("email", new EmailUpdateRequest(userDto.email()));
 
@@ -62,15 +64,16 @@ public class ProfileController {
     public String updateEmail(
             @Validated @ModelAttribute("email") EmailUpdateRequest emailUpdateRequest,
             BindingResult bindingResult,
-            @RequestParam UUID userId,
             Model model
     ) {
+        UserDto loginUser = (UserDto) model.getAttribute("loginUser");
+
         if (bindingResult.hasErrors()) {
-            model.addAttribute("name", new NameUpdateRequest(userService.findUser(userId).name()));
+            model.addAttribute("name", new NameUpdateRequest(userService.findUser(Objects.requireNonNull(loginUser).id()).name()));
             return "settings/profile-edit";
         }
 
-        UserDto userDto = userService.updateEmail(userId, emailUpdateRequest);
+        UserDto userDto = userService.updateEmail(Objects.requireNonNull(loginUser).id(), emailUpdateRequest);
         model.addAttribute("name", new NameUpdateRequest(userDto.name()));
 
         return "settings/profile-edit";

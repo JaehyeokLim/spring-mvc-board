@@ -3,6 +3,7 @@ package com.jaehyeoklim.spring.mvc.board.user.controller;
 import com.jaehyeoklim.spring.mvc.board.common.advice.UseLoginUser;
 import com.jaehyeoklim.spring.mvc.board.user.dto.AccountDeleteRequest;
 import com.jaehyeoklim.spring.mvc.board.user.dto.PasswordUpdateRequest;
+import com.jaehyeoklim.spring.mvc.board.user.dto.UserDto;
 import com.jaehyeoklim.spring.mvc.board.user.exception.PasswordUpdateException;
 import com.jaehyeoklim.spring.mvc.board.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -14,7 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -35,7 +36,6 @@ public class AccountController {
     public String updatePassword(
             @Validated @ModelAttribute("password") PasswordUpdateRequest passwordUpdateRequest,
             BindingResult bindingResult,
-            @RequestParam UUID userId,
             Model model
     ) {
         if (bindingResult.hasErrors()) {
@@ -44,7 +44,8 @@ public class AccountController {
         }
 
         try {
-            userService.updatePassword(userId, passwordUpdateRequest);
+            UserDto loginUser = (UserDto) model.getAttribute("loginUser");
+            userService.updatePassword(Objects.requireNonNull(loginUser).id(), passwordUpdateRequest);
         } catch (PasswordUpdateException e) {
             if (e.getReason() == PasswordUpdateException.Reason.INVALID_CURRENT) {
                 bindingResult.reject("NotMatch.user.password");
@@ -70,7 +71,6 @@ public class AccountController {
     public String deleteAccount(
             @Validated @ModelAttribute("password") AccountDeleteRequest accountDeleteRequest,
             BindingResult bindingResult,
-            @RequestParam UUID userId,
             HttpSession session,
             Model model
     ) {
@@ -79,7 +79,8 @@ public class AccountController {
         }
 
         try {
-            userService.deleteUser(userId, accountDeleteRequest);
+            UserDto loginUser = (UserDto) model.getAttribute("loginUser");
+            userService.deleteUser(Objects.requireNonNull(loginUser).id(), accountDeleteRequest);
         } catch (PasswordUpdateException e) {
             if (e.getReason() == PasswordUpdateException.Reason.INVALID_CURRENT) {
                 bindingResult.reject("NotMatch.user.password");
