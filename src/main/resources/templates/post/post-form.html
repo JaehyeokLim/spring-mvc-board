@@ -33,7 +33,7 @@
                 글쓰기
             </h3>
 
-            <form th:action="@{/posts/write}" th:object="${post}" method="post">
+            <form th:action="${mode == 'edit'} ? @{/posts/{postId}/edit(postId=${post.id})} : @{/posts/write}" th:object="${post}" method="post">
 
                 <!-- 제목 -->
                 <div class="mb-3">
@@ -42,8 +42,7 @@
                            th:field="*{title}"
                            class="form-control"
                            th:errorclass="field-error"
-                           th:placeholder="#{placeholder.postTitle}"
-                           required>
+                           th:placeholder="#{placeholder.postTitle}">
                     <div class="field-error" th:errors="*{title}"></div>
                 </div>
 
@@ -55,16 +54,17 @@
                               class="form-control"
                               th:errorclass="field-error"
                               rows="15"
-                              th:placeholder="#{placeholder.postContent}"
-                              required></textarea>
+                              th:placeholder="#{placeholder.postContent}"></textarea>
                     <div class="field-error" th:errors="*{content}"></div>
                 </div>
 
                 <!-- 등록/수정 버튼 -->
-                <button type="submit" class="btn btn-dark w-100"
-                        th:text="${mode == 'edit'} ? #{button.update} : #{button.write}">
-                    등록하기
-                </button>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-dark"
+                            th:text="${mode == 'edit'} ? #{button.update} : #{button.write}">
+                        등록하기
+                    </button>
+                </div>
 
             </form>
         </div>

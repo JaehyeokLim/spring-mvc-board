@@ -4,6 +4,7 @@ import com.jaehyeoklim.spring.mvc.board.common.advice.UseLoginUser;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostCreateRequest;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostDto;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostFormRequest;
+import com.jaehyeoklim.spring.mvc.board.post.dto.PostUpdateRequest;
 import com.jaehyeoklim.spring.mvc.board.post.exception.UnauthorizedActionException;
 import com.jaehyeoklim.spring.mvc.board.post.service.PostService;
 import com.jaehyeoklim.spring.mvc.board.user.dto.UserDto;
@@ -76,6 +77,24 @@ public class PostController {
         model.addAttribute("post", post);
         model.addAttribute("mode",  "edit");
         return "post/post-form";
+    }
+
+    @PostMapping("/{postId}/edit")
+    public String editPost(
+            @PathVariable("postId") Long postId,
+            @Validated @ModelAttribute("post") PostUpdateRequest updateRequest,
+            BindingResult bindingResult,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("mode", "edit");
+            return "post/post-form"; // 다시 수정 폼으로
+        }
+
+        UserDto loginUser = (UserDto) model.getAttribute("loginUser");
+        postService.updatePost(postId, Objects.requireNonNull(loginUser).id(), updateRequest);
+
+        return "redirect:/posts/" + postId;
     }
 
     @GetMapping("/{postId}/delete")

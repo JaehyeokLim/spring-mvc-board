@@ -3,6 +3,7 @@ package com.jaehyeoklim.spring.mvc.board.post.service;
 import com.jaehyeoklim.spring.mvc.board.post.domain.Post;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostCreateRequest;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostDto;
+import com.jaehyeoklim.spring.mvc.board.post.dto.PostUpdateRequest;
 import com.jaehyeoklim.spring.mvc.board.post.exception.UnauthorizedActionException;
 import com.jaehyeoklim.spring.mvc.board.post.repository.PostRepository;
 import com.jaehyeoklim.spring.mvc.board.user.service.UserService;
@@ -22,13 +23,16 @@ public class PostService {
     private final UserService userService;
 
     public PostDto createPost(PostCreateRequest request) {
-        Post post = postRepository.save(
+        Long newId = postRepository.getIncrementSequence();
+        Post post = new Post(
+                newId,
                 request.authorId(),
                 request.authorUsername(),
                 request.title(),
                 request.content()
         );
-        return toDto(post);
+
+        return toDto(postRepository.save(post));
     }
 
     public PostDto findPostById(Long id) {
@@ -41,6 +45,20 @@ public class PostService {
         return postRepository.findAll().stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public PostDto updatePost(Long postId, UUID loginUserId, PostUpdateRequest updateRequest) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("Post not found"));
+
+        if (!post.getAuthorId().equals(loginUserId)) {
+            throw new UnauthorizedActionException("Access denied for this operation");
+        }
+
+        post.update(updateRequest.title(), updateRequest.content());
+
+        // save 호출 (메모리 저장소에서는 put, DB에서는 merge/flush 역할)
+        return toDto(postRepository.save(post));
     }
 
     public void deletePost(Long postId, UUID authorId) {

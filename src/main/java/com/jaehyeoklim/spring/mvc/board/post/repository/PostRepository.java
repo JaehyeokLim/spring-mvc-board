@@ -13,11 +13,13 @@ public class PostRepository {
     private final Map<Long, Post> posts = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong(0);
 
-    public Post save(UUID authorId, String authorUsername, String title, String content) {
-        Long newId = sequence.incrementAndGet();
-        Post post = new Post(newId, authorId, authorUsername, title, content);
-        posts.put(newId, post);
+    public Post save(Post post) {
+        posts.put(post.getId(), post);
         return post;
+    }
+
+    public Long getIncrementSequence() {
+        return sequence.incrementAndGet();
     }
 
     public Optional<Post> findById(Long id) {
