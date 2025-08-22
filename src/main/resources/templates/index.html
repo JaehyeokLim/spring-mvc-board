@@ -3,15 +3,59 @@
 <head>
     <meta charset="utf-8">
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-    <title>홈 화면</title>
+    <title>My Board</title>
+    <style>
+        table {
+            font-size: 14px;
+        }
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        td.title {
+            text-align: left;
+            padding-left: 10px;
+        }
+        tr + tr {
+            border-top: 1px solid #ddd; /* 구분선 */
+        }
+    </style>
 </head>
 <body>
 
 <!-- 공통 네비게이션 -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<!-- 메인 컨텐츠 -->
 <div class="container mt-5">
+
+    <!-- 상단 버튼 영역 -->
+    <div class="d-flex justify-content-between mb-3">
+        <h4 th:text="#{label.allPosts}">전체글</h4>
+        <a class="btn btn-primary" th:href="@{/posts/write}" th:text="#{button.write}">글쓰기</a>
+    </div>
+
+    <!-- 게시글 목록 테이블 -->
+    <table class="table table-hover table-bordered">
+        <thead class="table-light">
+        <tr>
+            <th style="width: 5%;" th:text="#{header.id}">번호</th>
+            <th style="width: 55%;" th:text="#{header.title}">제목</th>
+            <th style="width: 20%;" th:text="#{header.author}">글쓴이</th>
+            <th style="width: 20%;" th:text="#{header.createdAt}">작성일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post : ${posts}">
+            <td th:text="${post.id}">1</td>
+            <td class="title">
+                <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">게시글 제목</a>
+            </td>
+            <td th:text="${post.authorName}">작성자</td>
+            <td th:text="${#temporals.format(post.createdAt, 'yy.MM.dd HH:mm')}">25.08.21</td>
+        </tr>
+        </tbody>
+    </table>
+
 </div>
 
 <!-- 공통 푸터 -->
