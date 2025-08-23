@@ -5,11 +5,11 @@ import jakarta.validation.constraints.Size;
 
 public record PostUpdateRequest(
 
-        @NotBlank(message = "{NotBlank.post.title}")
+        @NotBlank
         @Size(min = 2, max = 40)
         String title,
 
-        @NotBlank(message = "내용은 필수입니다.")
+        @NotBlank
         @Size(min = 2, max = 1000)
         String content
 ) {}
