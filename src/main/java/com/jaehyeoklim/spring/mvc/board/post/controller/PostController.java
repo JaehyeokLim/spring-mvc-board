@@ -74,7 +74,8 @@ public class PostController {
             throw new UnauthorizedActionException("Access denied for this operation");
         }
 
-        model.addAttribute("post", post);
+        PostUpdateRequest dto = new PostUpdateRequest(post.title(), post.content());
+        model.addAttribute("post", dto);
         model.addAttribute("mode",  "edit");
         return "post/post-form";
     }
@@ -82,17 +83,18 @@ public class PostController {
     @PostMapping("/{postId}/edit")
     public String editPost(
             @PathVariable("postId") Long postId,
-            @Validated @ModelAttribute("post") PostUpdateRequest updateRequest,
+            @Validated @ModelAttribute("post") PostUpdateRequest postUpdateRequest,
             BindingResult bindingResult,
             Model model
     ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("mode", "edit");
-            return "post/post-form"; // 다시 수정 폼으로
+            model.addAttribute("postId", postId);
+            return "post/post-form";
         }
 
         UserDto loginUser = (UserDto) model.getAttribute("loginUser");
-        postService.updatePost(postId, Objects.requireNonNull(loginUser).id(), updateRequest);
+        postService.updatePost(postId, Objects.requireNonNull(loginUser).id(), postUpdateRequest);
 
         return "redirect:/posts/" + postId;
     }
