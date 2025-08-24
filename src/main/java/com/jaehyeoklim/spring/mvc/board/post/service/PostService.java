@@ -59,7 +59,6 @@ public class PostService {
 
         post.update(updateRequest.title(), updateRequest.content());
 
-        // save 호출 (메모리 저장소에서는 put, DB에서는 merge/flush 역할)
         return toDto(postRepository.save(post));
     }
 
