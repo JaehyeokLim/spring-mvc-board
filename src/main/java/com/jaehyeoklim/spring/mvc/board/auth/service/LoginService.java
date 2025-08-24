@@ -15,6 +15,7 @@ public class LoginService {
 
     public UUID login(String username, String password) {
         return userRepository.findByUsername(username)
+                .filter(user -> !user.isDeleted())
                 .filter(user -> user.getPassword().equals(password))
                 .map(User::getId)
                 .orElse(null);
