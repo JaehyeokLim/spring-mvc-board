@@ -26,16 +26,6 @@ public class UserRepository {
                 .findFirst();
     }
 
-    public Optional<User> findByEmail(String email) {
-        return users.values().stream()
-                .filter(user -> user.getEmail().equals(email))
-                .findFirst();
-    }
-
-    public List<User> findAll() {
-        return new ArrayList<>(users.values());
-    }
-
     public void delete(UUID id) {
         User user = users.get(id);
         if (user != null) {
