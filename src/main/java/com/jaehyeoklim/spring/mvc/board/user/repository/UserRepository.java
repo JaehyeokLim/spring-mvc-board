@@ -37,7 +37,10 @@ public class UserRepository {
     }
 
     public void delete(UUID id) {
-        users.remove(id);
+        User user = users.get(id);
+        if (user != null) {
+            user.delete();
+        }
     }
 
     public Boolean existsByUsername(String username) {

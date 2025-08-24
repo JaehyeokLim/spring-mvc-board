@@ -5,6 +5,8 @@ import com.jaehyeoklim.spring.mvc.board.user.dto.*;
 import com.jaehyeoklim.spring.mvc.board.user.exception.PasswordUpdateException;
 import com.jaehyeoklim.spring.mvc.board.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -15,6 +17,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final MessageSource messageSource;
 
     public boolean isUsernameTaken(String username) {
         return userRepository.existsByUsername(username);
@@ -90,6 +93,15 @@ public class UserService {
     }
 
     private UserDto toDto(User user) {
+        if (user.isDeleted()) {
+            return new UserDto(
+                    null,
+                    messageSource.getMessage("user.deleted.username", null, LocaleContextHolder.getLocale()),
+                    messageSource.getMessage("user.deleted.name", null, LocaleContextHolder.getLocale()),
+                    null
+            );
+        }
+
         return new UserDto(
                 user.getId(),
                 user.getUsername(),
