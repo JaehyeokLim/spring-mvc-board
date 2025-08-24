@@ -14,7 +14,7 @@ public class Post {
     private final Long id;
     private final UUID authorId;
 
-    private String authorUsername;
+    private final String authorUsername;
     private String title;
     private String content;
 
@@ -30,8 +30,8 @@ public class Post {
         this.authorUsername = authorUsername;
         this.title = title;
         this.content = content;
+        this.isDeleted = false;
         this.createdAt = Instant.now();
-        this.updatedAt = this.createdAt;
     }
 
     public void delete() {
