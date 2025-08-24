@@ -6,6 +6,7 @@ import com.jaehyeoklim.spring.mvc.board.post.dto.PostDto;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostUpdateRequest;
 import com.jaehyeoklim.spring.mvc.board.post.exception.UnauthorizedActionException;
 import com.jaehyeoklim.spring.mvc.board.post.repository.PostRepository;
+import com.jaehyeoklim.spring.mvc.board.user.dto.UserDto;
 import com.jaehyeoklim.spring.mvc.board.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class PostService {
 
     public PostDto findPostById(Long id) {
        return postRepository.findById(id)
+               .filter(p -> !p.isDeleted())
                .map(this::toDto)
                .orElseThrow(() -> new NoSuchElementException("Post with id " + id + " not found"));
     }
@@ -73,13 +75,13 @@ public class PostService {
     }
 
     private PostDto toDto(Post post) {
-        String authorName = userService.findUser(post.getAuthorId()).name();
+        UserDto author = userService.findUser(post.getAuthorId());
 
         return new PostDto(
                 post.getId(),
                 post.getAuthorId(),
-                post.getAuthorUsername(),
-                authorName,
+                author.username(),
+                author.name(),
                 post.getTitle(),
                 post.getContent(),
                 post.getCreatedAt()

@@ -18,8 +18,11 @@ public class Post {
     private String title;
     private String content;
 
+    private boolean isDeleted;
+
     private final Instant createdAt;
     private Instant updatedAt;
+    private Instant deletedAt;
 
     public Post(Long id, UUID authorId, String authorUsername, String title, String content) {
         this.id = id;
@@ -29,6 +32,11 @@ public class Post {
         this.content = content;
         this.createdAt = Instant.now();
         this.updatedAt = this.createdAt;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+        this.deletedAt = Instant.now();
     }
 
     public void update(String title, String content) {

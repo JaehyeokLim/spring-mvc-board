@@ -1,6 +1,7 @@
 package com.jaehyeoklim.spring.mvc.board.post.repository;
 
 import com.jaehyeoklim.spring.mvc.board.post.domain.Post;
+import com.jaehyeoklim.spring.mvc.board.user.domain.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -28,11 +29,15 @@ public class PostRepository {
 
     public List<Post> findAll() {
         return posts.values().stream()
+                .filter(post -> !post.isDeleted())
                 .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
                 .toList();
     }
 
     public void delete(Long id) {
-        posts.remove(id);
+        Post post = posts.get(id);
+        if (post != null) {
+            post.delete();
+        }
     }
 }
