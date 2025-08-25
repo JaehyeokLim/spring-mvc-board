@@ -1,4 +1,4 @@
-package com.jaehyeoklim.spring.mvc.board.post.exception;
+package com.jaehyeoklim.spring.mvc.board.common.exception;
 
 public class UnauthorizedActionException extends RuntimeException {
     public UnauthorizedActionException(String message) {

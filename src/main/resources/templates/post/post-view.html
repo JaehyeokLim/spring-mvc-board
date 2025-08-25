@@ -26,15 +26,9 @@
     <div class="card shadow">
         <div class="card-body p-4" th:object="${post}">
 
-            <!-- 제목 + 수정/삭제 버튼 -->
+            <!-- 제목 -->
             <div class="post-header mb-2">
                 <div class="post-title" th:text="*{title}">게시글 제목</div>
-                <div class="post-actions" th:if="${loginUser != null and loginUser.id == post.authorId}">
-                    <a th:href="@{/posts/{id}/edit(id=*{id})}" class="post-action-link"
-                       th:text="#{button.edit}">수정</a>
-                    <a th:href="@{/posts/{id}/delete(id=*{id})}" class="post-action-link"
-                       th:text="#{button.delete}">삭제</a>
-                </div>
             </div>
 
             <!-- 작성자 정보 / 날짜 -->
@@ -54,19 +48,67 @@
             </div>
 
             <!-- 댓글 영역 -->
-            <div class="comment-section">
-                <h6 th:text="#{label.comments}">댓글</h6>
+            <div class="comment-section mt-4">
+
+                <!-- 댓글 제목 + 수정/삭제 버튼 -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0" th:text="#{label.comments}">댓글</h6>
+
+                    <!-- 게시글 수정/삭제 버튼 -->
+                    <div th:if="${loginUser != null and loginUser.id == post.authorId}">
+                        <a th:href="@{/posts/{id}/edit(id=*{id})}" class="post-action-link text-decoration-none me-2"
+                           th:text="#{button.edit}">수정</a>
+                        <a th:href="@{/posts/{id}/delete(id=*{id})}" class="post-action-link text-decoration-none"
+                           th:text="#{button.delete}">삭제</a>
+                    </div>
+                </div>
+
                 <div class="comment-divider"></div>
 
-                <!-- 댓글 입력 폼 -->
-                <form class="comment-form">
-                    <div class="mb-3">
-                        <textarea class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                <!-- 댓글 리스트 -->
+                <div th:each="comment : ${comments}" class="mb-3 pb-3 border-bottom">
+                    <div class="d-flex justify-content-between">
+                        <!-- 작성자 + 시간 -->
+                        <div>
+                            <span class="text-muted" th:text="${comment.authorName}">작성자</span>
+                            <span class="text-muted" th:text="'· ' + ${comment.authorUsername}">· 아이디</span>
+                        </div>
+                        <div class="text-muted"
+                             th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">
+                            2025-08-24 14:30
+                        </div>
                     </div>
+
+                    <!-- 댓글 내용 -->
+                    <div class="mt-2" th:text="${comment.content}">
+                        댓글 내용이 여기에 표시됩니다.
+                    </div>
+
+                    <!-- 댓글 삭제 버튼 -->
+                    <div class="text-end mt-2"
+                         th:if="${loginUser != null and loginUser.id == comment.authorId}">
+                        <a th:href="@{/posts/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}"
+                           class="post-action-link text-decoration-none"
+                           th:text="#{button.delete}">삭제</a>
+                    </div>
+                </div>
+
+                <!-- 댓글 입력 폼 -->
+                <form th:action="@{/posts/{postId}/comments(postId=${post.id})}"
+                      th:object="${commentForm}" method="post" class="comment-form">
+
+                    <div class="mb-3">
+                        <textarea class="form-control" th:field="*{content}" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                        <div class="field-error" th:errors="*{content}"></div>
+                    </div>
+
                     <div class="text-end">
                         <button type="submit" class="btn btn-dark">댓글 등록</button>
                     </div>
+
                 </form>
+
+            </div>
 
             </div>
 

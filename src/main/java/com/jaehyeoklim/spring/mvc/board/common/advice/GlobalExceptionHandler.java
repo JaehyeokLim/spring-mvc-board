@@ -1,9 +1,8 @@
 package com.jaehyeoklim.spring.mvc.board.common.advice;
 
 import com.jaehyeoklim.spring.mvc.board.auth.resolver.Login;
-import com.jaehyeoklim.spring.mvc.board.post.exception.UnauthorizedActionException;
+import com.jaehyeoklim.spring.mvc.board.common.exception.UnauthorizedActionException;
 import com.jaehyeoklim.spring.mvc.board.user.dto.UserDto;
-import com.jaehyeoklim.spring.mvc.board.user.exception.PasswordUpdateException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

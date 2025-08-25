@@ -1,11 +1,14 @@
 package com.jaehyeoklim.spring.mvc.board.post.controller;
 
+import com.jaehyeoklim.spring.mvc.board.comment.dto.CommentDto;
+import com.jaehyeoklim.spring.mvc.board.comment.dto.CommentFormRequest;
+import com.jaehyeoklim.spring.mvc.board.comment.service.CommentService;
 import com.jaehyeoklim.spring.mvc.board.common.advice.UseLoginUser;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostCreateRequest;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostDto;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostFormRequest;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostUpdateRequest;
-import com.jaehyeoklim.spring.mvc.board.post.exception.UnauthorizedActionException;
+import com.jaehyeoklim.spring.mvc.board.common.exception.UnauthorizedActionException;
 import com.jaehyeoklim.spring.mvc.board.post.service.PostService;
 import com.jaehyeoklim.spring.mvc.board.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -24,6 +28,7 @@ import java.util.Objects;
 public class PostController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
     @GetMapping("/write")
     public String writePostForm(
@@ -46,14 +51,14 @@ public class PostController {
 
         UserDto loginUser = (UserDto) model.getAttribute("loginUser");
 
-        PostCreateRequest createRequest = new PostCreateRequest(
+        PostCreateRequest postCreateRequest = new PostCreateRequest(
                 Objects.requireNonNull(loginUser).id(),
                 Objects.requireNonNull(loginUser).username(),
                 postFormRequest.title(),
                 postFormRequest.content()
         );
 
-        PostDto savedPost = postService.createPost(createRequest);
+        PostDto savedPost = postService.createPost(postCreateRequest);
 
         return "redirect:/posts/" + savedPost.id();
     }
@@ -61,7 +66,10 @@ public class PostController {
     @GetMapping("/{postId}")
     public String viewPost(@PathVariable("postId") Long postId, Model model) {
         PostDto post = postService.findPostById(postId);
+        List<CommentDto> comments = commentService.findCommentsByPost(postId);
         model.addAttribute("post", post);
+        model.addAttribute("comments", comments);
+        model.addAttribute("commentForm", new CommentFormRequest(""));
         return "post/post-view";
     }
 
@@ -74,8 +82,8 @@ public class PostController {
             throw new UnauthorizedActionException("Access denied for this operation");
         }
 
-        PostUpdateRequest dto = new PostUpdateRequest(post.title(), post.content());
-        model.addAttribute("post", dto);
+        PostUpdateRequest postUpdateRequest = new PostUpdateRequest(post.title(), post.content());
+        model.addAttribute("post", postUpdateRequest);
         model.addAttribute("mode",  "edit");
         return "post/post-form";
     }

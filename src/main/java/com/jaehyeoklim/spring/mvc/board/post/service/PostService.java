@@ -4,7 +4,7 @@ import com.jaehyeoklim.spring.mvc.board.post.domain.Post;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostCreateRequest;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostDto;
 import com.jaehyeoklim.spring.mvc.board.post.dto.PostUpdateRequest;
-import com.jaehyeoklim.spring.mvc.board.post.exception.UnauthorizedActionException;
+import com.jaehyeoklim.spring.mvc.board.common.exception.UnauthorizedActionException;
 import com.jaehyeoklim.spring.mvc.board.post.repository.PostRepository;
 import com.jaehyeoklim.spring.mvc.board.user.dto.UserDto;
 import com.jaehyeoklim.spring.mvc.board.user.service.UserService;
@@ -24,9 +24,8 @@ public class PostService {
     private final UserService userService;
 
     public PostDto createPost(PostCreateRequest request) {
-        Long newId = postRepository.getIncrementSequence();
         Post post = new Post(
-                newId,
+                postRepository.getIncrementSequence(),
                 request.authorId(),
                 request.authorUsername(),
                 request.title(),
@@ -51,7 +50,7 @@ public class PostService {
 
     public PostDto updatePost(Long postId, UUID loginUserId, PostUpdateRequest updateRequest) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NoSuchElementException("Post not found"));
+                .orElseThrow(() -> new NoSuchElementException("Post with id " + postId + " not found"));
 
         if (!post.getAuthorId().equals(loginUserId)) {
             throw new UnauthorizedActionException("Access denied for this operation");
